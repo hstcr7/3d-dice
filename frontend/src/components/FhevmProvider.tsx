@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { initializeFheInstance, getFheInstance } from '../utils/fhevm';
+import { initializeFheInstance } from '../utils/fhevm';
 import { BrowserProvider } from 'ethers';
 
 interface FhevmContextType {

@@ -1,4 +1,4 @@
-import { getFheInstance, initializeFheInstance } from './fhevm';
+import { initializeFheInstance } from './fhevm';
 import { BrowserProvider, Contract, getAddress, ethers } from 'ethers';
 import PrivateSicBo from '../deployments/PrivateSicBo.json';
 
@@ -286,13 +286,12 @@ export const requestSettle = async (
  */
 export const finalizeSettle = async (
     roundId: number,
-    account: string,
+    _account: string,
     signer: any
 ): Promise<boolean> => {
     try {
         const contract = getContract(signer);
         const instance = await initializeFheInstance();
-        const checksummedContractAddress = getAddress(CONTRACT_ADDRESS);
 
         // Get encrypted payout handle
         const encPayoutHandle = await contract.getEncryptedPayoutHandle(roundId);
