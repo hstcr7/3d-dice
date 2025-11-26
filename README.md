@@ -18,7 +18,7 @@ A fully private SicBo (3 dice) game built on **FHEVM** (Fully Homomorphic Encryp
 - **🎨 Modern UI**: Dark theme with glass morphism, gradients, and smooth animations
 - **📊 History Table**: Clean table layout for viewing all rounds with status indicators
 - **💾 Local Caching**: Dice values cached to avoid repeated decryption signatures
-- **🎰 Chip Selector**: Quick stake selection with preset amounts
+- **🎰 Chip Selector**: Quick stake selection with preset amounts.
 
 ## 📍 Contract Addresses
 
