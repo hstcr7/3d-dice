@@ -155,6 +155,8 @@ export const placeBet = async (
 ): Promise<number> => {
     try {
         const contract = getContract(signer);
+        const provider = new BrowserProvider(window.ethereum);
+        const account = await signer.getAddress();
         
         // Check if token is set
         const tokenAddress = await contract.token();
@@ -162,26 +164,68 @@ export const placeBet = async (
             throw new Error("Token not set in contract");
         }
 
+        // Check user balance
+        const tokenContract = getTokenContract(tokenAddress, provider);
+        const balance = await tokenContract.balanceOf(account);
+        if (balance < stakeAmount) {
+            throw new Error(`Insufficient balance. You have ${ethers.formatEther(balance)} DICE, but need ${ethers.formatEther(stakeAmount)} DICE`);
+        }
+
         // Check allowance and approve if needed
-        const provider = new BrowserProvider(window.ethereum);
-        const account = await signer.getAddress();
         const allowance = await getTokenAllowance(tokenAddress, account, CONTRACT_ADDRESS, provider);
         
         if (allowance < stakeAmount) {
             // Approve more than needed to avoid multiple approvals
             const approveAmount = stakeAmount * 10n; // Approve 10x for future bets
+            console.log(`Approving ${ethers.formatEther(approveAmount)} DICE tokens...`);
             await approveToken(tokenAddress, CONTRACT_ADDRESS, approveAmount, signer);
+            console.log("Approval confirmed");
         }
         
+        // Try to estimate gas first to catch errors early
+        try {
+            await contract.bet.estimateGas(betType, a, b, stakeAmount);
+        } catch (estimateError: any) {
+            // Parse revert reason if available
+            const reason = estimateError.reason || estimateError.message || "Unknown error";
+            if (reason.includes("InsufficientAllowance")) {
+                throw new Error("Insufficient token allowance. Please approve more tokens.");
+            } else if (reason.includes("TokenNotSet")) {
+                throw new Error("Token not set in contract");
+            } else if (reason.includes("InvalidBet")) {
+                throw new Error("Invalid bet parameters");
+            } else if (reason.includes("Transfer failed")) {
+                throw new Error("Token transfer failed. Check your balance and allowance.");
+            } else if (reason.includes("Stake too large")) {
+                throw new Error("Stake amount too large (max 18 DICE tokens)");
+            } else {
+                throw new Error(`Bet validation failed: ${reason}`);
+            }
+        }
+        
+        console.log(`Placing bet: type=${betType}, a=${a}, b=${b}, stake=${ethers.formatEther(stakeAmount)} DICE`);
         const tx = await contract.bet(betType, a, b, stakeAmount);
-        await tx.wait();
+        console.log(`Transaction sent: ${tx.hash}`);
+        const receipt = await tx.wait();
+        
+        if (!receipt || receipt.status === 0) {
+            throw new Error("Transaction reverted. Please check your balance, allowance, and bet parameters.");
+        }
         
         // Get round ID
         const roundId = await contract.roundsCount();
         return Number(roundId);
     } catch (error: any) {
         console.error("Place bet error:", error);
-        throw error;
+        
+        // Improve error messages
+        if (error.reason) {
+            throw new Error(error.reason);
+        } else if (error.message) {
+            throw error;
+        } else {
+            throw new Error("Bet failed: " + (error.toString() || "Unknown error"));
+        }
     }
 };
 
