@@ -1,11 +1,15 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { ethers } from 'ethers';
-import * as fs from 'fs';
-import * as path from 'path';
 
-// Load DICE deployment info
-const DICE_PATH = path.join(process.cwd(), 'src', 'deployments', 'DICE.json');
-const DICE = JSON.parse(fs.readFileSync(DICE_PATH, 'utf-8'));
+// DICE Token Contract Address (Sepolia)
+const DICE_ADDRESS = process.env.DICE_TOKEN_ADDRESS || '0x3F0ECEba638774FcFB5b1d77bBBD37225184E63B';
+
+// Minimal ABI for faucet operations
+const DICE_ABI = [
+  "function mint(address to, uint256 amount) returns (bool)",
+  "function owner() view returns (address)",
+  "function balanceOf(address owner) view returns (uint256)"
+];
 
 /**
  * Vercel Serverless Function for DICE Token Faucet
@@ -56,8 +60,8 @@ export default async function handler(
 
     // Get DICE contract
     const diceContract = new ethers.Contract(
-      DICE.address,
-      DICE.abi,
+      DICE_ADDRESS,
+      DICE_ABI,
       signer
     );
 
