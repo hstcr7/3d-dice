@@ -119,7 +119,7 @@ Open `http://localhost:5173` in your browser.
 
 ## 💧 Getting DICE Tokens (Faucet)
 
-The faucet is **automatically available** when deployed to Vercel with proper configuration
+The faucet is **automatically available** when deployed to Vercel with proper configuration.
 
 ### For Users:
 - Click the **"Faucet"** button in the navbar (green button with droplet icon)
