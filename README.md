@@ -117,11 +117,44 @@ npm run dev
 
 Open `http://localhost:5173` in your browser.
 
+## 💧 Getting DICE Tokens (Faucet)
+
+The faucet is **automatically available** when deployed to Vercel with proper configuration.
+
+### For Users:
+- Click the **"Faucet"** button in the navbar (green button with droplet icon)
+- The system will automatically mint **1000 DICE tokens** to your address
+- Rate limiting: You can only request tokens if your balance is below 100 DICE
+
+### For Deployment (Vercel):
+
+To enable automatic faucet, configure these environment variables in Vercel:
+
+1. **FAUCET_PRIVATE_KEY**: Private key of the DICE token owner (who can mint tokens)
+2. **SEPOLIA_RPC_URL**: Sepolia RPC endpoint (e.g., from Infura, Alchemy, or public RPC)
+
+**Setup in Vercel Dashboard:**
+1. Go to your project → Settings → Environment Variables
+2. Add:
+   - `FAUCET_PRIVATE_KEY` = Your DICE token owner's private key
+   - `SEPOLIA_RPC_URL` = `https://sepolia.infura.io/v3/YOUR_KEY` or similar
+
+**Alternative: Manual Mint Script**
+If you prefer not to use the automatic faucet, contract owner can mint tokens manually:
+
+```bash
+cd contracts
+npm run faucet -- <user_address> [amount]
+# Example: npm run faucet -- 0x123... 1000
+# Default amount: 1000 DICE tokens
+```
+
 ## 🎮 How to Play
 
 1. **Connect Wallet**: Click "Connect Wallet" and approve MetaMask connection
-2. **Approve Tokens**: Click "Approve" to allow the contract to spend your DICE tokens (one-time setup)
-3. **Place Bet**:
+2. **Get DICE Tokens**: Use the Faucet button or contact owner to receive test tokens
+3. **Approve Tokens**: Click "Approve" to allow the contract to spend your DICE tokens (one-time setup)
+4. **Place Bet**:
    - Select bet type (Big/Small, Sum Exact, etc.)
    - Choose your bet parameters (Small/Big, number, sum, etc.)
    - Select stake using chip buttons (1, 5, 10, 50, 100) or enter custom amount (max 18 DICE)

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wallet, Dices } from 'lucide-react';
+import { Wallet, Dices, Droplet } from 'lucide-react';
 import { ethers } from 'ethers';
 
 interface NavbarProps {
@@ -9,9 +9,10 @@ interface NavbarProps {
   onConnect: () => void;
   loading: boolean;
   onApprove?: () => void;
+  onFaucet?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ balance, decimals, address, onConnect, loading, onApprove }) => {
+const Navbar: React.FC<NavbarProps> = ({ balance, decimals, address, onConnect, loading, onApprove, onFaucet }) => {
   return (
     <nav className="w-full h-20 px-6 flex items-center justify-between border-b border-white/10 glass-panel sticky top-0 z-50">
       <div className="flex items-center gap-3">
@@ -34,6 +35,18 @@ const Navbar: React.FC<NavbarProps> = ({ balance, decimals, address, onConnect, 
                {balance > 0n ? ethers.formatUnits(balance, decimals) : '0'} DICE
              </span>
            </div>
+        )}
+        
+        {address && onFaucet && (
+          <button 
+            onClick={onFaucet}
+            disabled={loading || balance > 0n}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            title={balance > 0n ? "You already have DICE tokens" : "Get free DICE tokens for testing"}
+          >
+            <Droplet className="w-4 h-4" />
+            Faucet
+          </button>
         )}
         
         {address && onApprove && (

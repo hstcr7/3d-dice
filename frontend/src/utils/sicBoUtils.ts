@@ -63,6 +63,8 @@ export const getTokenContract = (tokenAddress: string, signerOrProvider: any) =>
         "function transfer(address to, uint256 amount) returns (bool)",
         "function decimals() view returns (uint8)",
         "function symbol() view returns (string)",
+        "function mint(address to, uint256 amount) returns (bool)",
+        "function owner() view returns (address)",
     ];
     return new Contract(tokenAddress, tokenABI, signerOrProvider);
 };
@@ -383,6 +385,43 @@ export const getRoundsCount = async (
     } catch (error: any) {
         console.error("Get rounds count error:", error);
         return 0;
+    }
+};
+
+/**
+ * Request DICE tokens from faucet
+ * Calls the Vercel serverless function API to automatically mint tokens
+ */
+export const requestFaucet = async (
+    account: string,
+    _tokenAddress: string,
+    _provider: BrowserProvider
+): Promise<boolean> => {
+    try {
+        // Get API URL (use current origin for Vercel deployment, or localhost for dev)
+        const apiUrl = import.meta.env.VITE_FAUCET_API_URL || 
+                      (typeof window !== 'undefined' ? `${window.location.origin}/api/faucet` : '/api/faucet');
+        
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ address: account })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to request tokens from faucet');
+        }
+
+        if (data.success) {
+            return true;
+        }
+
+        throw new Error(data.error || 'Unknown error');
+    } catch (error: any) {
+        console.error("Request faucet error:", error);
+        throw error;
     }
 };
 

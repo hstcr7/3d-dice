@@ -19,6 +19,7 @@ import {
     getTokenBalance,
     getTokenDecimals,
     approveToken,
+    requestFaucet,
     CONTRACT_ADDRESS,
 } from './utils/sicBoUtils'
 import { ethers } from 'ethers'
@@ -160,6 +161,27 @@ function App() {
         }
     };
 
+    const handleFaucet = async () => {
+        if (!window.ethereum || !account || !tokenAddress) return;
+        setLoading(true);
+        try {
+            const provider = new BrowserProvider(window.ethereum);
+            
+            // Try to request from faucet
+            await requestFaucet(account, tokenAddress, provider);
+            setMessage("DICE tokens requested! Please wait a moment and refresh your balance.");
+            
+            // Wait a bit and reload balance
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            await loadTokenInfo();
+        } catch (error: any) {
+            console.error("Faucet error:", error);
+            setMessage("Faucet: " + error.message + " For testnet, you may need to contact the contract owner.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleDecryptDice = async (roundId: number) => {
         if (!window.ethereum || !account) return;
         setLoading(true);
@@ -248,6 +270,7 @@ function App() {
                 onConnect={connect} 
                 loading={loading}
                 onApprove={handleApproveToken}
+                onFaucet={handleFaucet}
             />
 
             {message && (

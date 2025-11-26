@@ -8,6 +8,7 @@
     "deploy:dice": "hardhat run scripts/deploy-dice.ts --network sepolia",
     "set:token": "hardhat run scripts/set-token.ts --network sepolia",
     "fund:contract": "hardhat run scripts/fund-contract.ts --network sepolia",
+    "faucet": "hardhat run scripts/faucet.ts --network sepolia",
     "setup:all": "npm run deploy:dice && npm run set:token && npm run fund:contract",
     "test": "hardhat test"
   },
