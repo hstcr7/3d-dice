@@ -2,6 +2,8 @@
 
 A fully private SicBo (3 dice) game built on **FHEVM** (Fully Homomorphic Encryption Virtual Machine), featuring encrypted on-chain operations, ERC20 token support, and a modern 3D animated UI.
 
+![Private SicBo Game Interface](./image.png)
+
 ## ✨ Features
 
 - **🔒 Fully Private**: Dice rolls and payouts are encrypted on-chain using FHEVM
