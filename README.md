@@ -128,16 +128,24 @@ The faucet is **automatically available** when deployed to Vercel with proper co
 
 ### For Deployment (Vercel):
 
-To enable automatic faucet, configure these environment variables in Vercel:
+To enable automatic faucet, you **must** configure these environment variables in Vercel Dashboard:
 
+**Required Environment Variables:**
 1. **FAUCET_PRIVATE_KEY**: Private key of the DICE token owner (who can mint tokens)
 2. **SEPOLIA_RPC_URL**: Sepolia RPC endpoint (e.g., from Infura, Alchemy, or public RPC)
 
-**Setup in Vercel Dashboard:**
-1. Go to your project → Settings → Environment Variables
-2. Add:
-   - `FAUCET_PRIVATE_KEY` = Your DICE token owner's private key
-   - `SEPOLIA_RPC_URL` = `https://sepolia.infura.io/v3/YOUR_KEY` or similar
+**Setup Steps in Vercel Dashboard:**
+1. Go to your Vercel project
+2. Navigate to **Settings** → **Environment Variables**
+3. Click **Add New** and add each variable:
+   - **Name**: `FAUCET_PRIVATE_KEY`
+     - **Value**: Your DICE token owner's private key (without `0x` prefix)
+     - **Environment**: Production, Preview, Development (select all)
+   - **Name**: `SEPOLIA_RPC_URL`
+     - **Value**: `https://sepolia.infura.io/v3/YOUR_INFURA_KEY` or `https://eth-sepolia.g.alchemy.com/v2/YOUR_ALCHEMY_KEY`
+     - **Environment**: Production, Preview, Development (select all)
+4. **Important**: After adding variables, you need to **redeploy** your project for changes to take effect
+5. Go to **Deployments** tab → Click **⋯** on latest deployment → **Redeploy**
 
 **Alternative: Manual Mint Script**
 If you prefer not to use the automatic faucet, contract owner can mint tokens manually:
